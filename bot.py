@@ -1,7 +1,9 @@
 import json
 import os
 import random
+from contextlib import nullcontext
 from datetime import datetime, timedelta
+from tkinter import Y
 
 import certifi
 import discord
@@ -37,12 +39,18 @@ async def roll(ctx, number_of_dice: int, number_of_sides: int):
 @bot.command(name='add', help='Add note. Ex: !add <note> <category> <category_text>')
 async def addNote(ctx, nameNote: str, category: str, categoryText: str):
     print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
-    await ctx.reply(saveNote(ctx, nameNote, category, categoryText))
+    if not validateWhenAddOrUpdateFieldsEmbed(category, categoryText):
+        await ctx.reply('Invalid URL from image. Only HTTPS available.')
+    else:
+        await ctx.reply(saveNote(ctx, nameNote, category, categoryText))
 
 @bot.command(name='edit', help='Edit note. Ex: !edit <note> <category> <new_category_text>')
 async def editNote(ctx, nameNote: str, category: str, categoryText: str):
     print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
-    await ctx.reply(editNote(ctx, nameNote, category, categoryText))
+    if not validateWhenAddOrUpdateFieldsEmbed(category, categoryText):
+        await ctx.reply('Invalid URL from image. Only HTTPS available.')
+    else:
+        await ctx.reply(editNote(ctx, nameNote, category, categoryText))
 
 @bot.command(name='show', help='Show note. Ex: !show <note>')
 async def showNote(ctx, nameNote: str):
@@ -59,49 +67,51 @@ async def findNoteByName(ctx, nameNote):
     query = {"id_user": ctx.author.id, nameNote: {"$exists": True}}
     note = collection.find_one(query)
     if(note):
-        print(str(note))
         onlyNote = note[nameNote]
-        if(onlyNote['dat_last_modified']):
-            onlyNote['dat_last_modified'] = json.dumps(
-                onlyNote['dat_last_modified'], default=myconverter)
+        onlyNote['dat_last_modified'] = json.dumps(onlyNote['dat_last_modified'], default=myconverter) if 'dat_last_modified' in onlyNote else 'none'
         onlyNote['dat_creation'] = json.dumps(
             onlyNote['dat_creation'], default=myconverter)
         onlyNote = str(onlyNote).replace("\"", "")
-        print(onlyNote)
         return await ctx.reply(embed=embed(ctx, nameNote, onlyNote))
     else:
         return await ctx.reply('> **' + nameNote + '** does not exists!')
 
 
 def embed(ctx, nameNote, response: str):
-    print(response)
-    embed = discord.Embed(
-        title=nameNote,
-        url="https://realdrewdata.medium.com/",
-        description="Details from " + nameNote + ":",
-        color=discord.Color.blue())
-    embed.set_author(name="Sheila", url="https://twitter.com/RealDrewData",
-                     icon_url="https://cdn-images-1.medium.com/fit/c/32/32/1*QVYjh50XJuOLQBeH_RZoGw.jpeg")
-    # embed.set_author(name=ctx.author.display_name, url="https://twitter.com/RealDrewData", icon_url=ctx.author.avatar_url)
     response = response.replace("\'", "\"")
-    print(response)
     response = json.loads(response)
-
+    
+    embed = discord.Embed(
+        title=nameNote.capitalize(),
+        url="https://realdrewdata.medium.com/",
+        description="||"+
+        "\n> **Date creation=**  " + (response.get('dat_creation') if response.get('dat_creation') != None else "") + 
+        ("\n> **Date last modified=**  " + response.get('dat_last_modified') if response.get('dat_last_modified') != None else "") +
+        "||",
+        color=discord.Color.blue())
+    embed.set_author(name="HaruBot", url="https://twitter.com/RealDrewDatad",
+                     icon_url="https://i.pinimg.com/originals/b9/ee/eb/b9eeeb6c66879c91025108e8656b1ed0.jpg")
+    # embed.set_author(name=ctx.author.display_name, url="https://twitter.com/RealDrewData", icon_url=ctx.author.avatar_url)
+    
     if not (response.get('thumbnail') is None):
         embed.set_thumbnail(url=response['thumbnail'])
     else:
         embed.set_thumbnail(url="https://i.imgur.com/axLm3p6.jpeg")
 
-    print(response)
+    if not (response.get('image') is None):
+        embed.set_image(url=response['image'])
+    else:
+        embed.set_image(url="https://i.pinimg.com/originals/b9/ee/eb/b9eeeb6c66879c91025108e8656b1ed0.jpg")
+
     for key, value in response.items():
-        if (key == "dat_creation"):
-            key = "date creation"
+        # if (key == "dat_creation"):
+        #     key = "date creation"
+        #     embed.add_field(name="**"+key.upper()+"**",
+        #                     value=value, inline=False)
+        # else:
+        if (key != "dat_last_modified" and key != "thumbnail" and key != "dat_creation" and key != "image"):
             embed.add_field(name="**"+key.upper()+"**",
                             value=value, inline=False)
-        else:
-            if (key != "dat_last_modified" and key != "thumbnail"):
-                embed.add_field(name="**"+key.upper()+"**",
-                                value=value, inline=False)
 
     # embed.add_field(name="*Italics*", value="Surround your text in asterisks (\*)", inline=False)
     # embed.add_field(name="**Bold**", value="Surround your text in double asterisks (\*\*)", inline=False)
@@ -113,6 +123,14 @@ def embed(ctx, nameNote, response: str):
     embed.set_footer(text="About: haru-bot on Github")
     return embed
 
+def validateWhenAddOrUpdateFieldsEmbed(category: str, categoryText: str):
+    if category in ['image','thumbnail']:
+        print('validating embeded fields')
+
+        if categoryText.startswith("https://") and categoryText.__contains__(".") and (categoryText.index(".") - len(categoryText)) < 2:
+            return True
+        else:
+            return False
 
 def saveNote(ctx, nameNote, category, categoryText):
     queryUserExists = {"id_user": ctx.author.id}

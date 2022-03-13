@@ -39,6 +39,10 @@ async def addNote(ctx, nameNote: str, category: str, categoryText: str):
     print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
     await ctx.reply(saveNote(ctx, nameNote, category, categoryText))
 
+@bot.command(name='edit', help='Edit note. Ex: !edit <note> <category> <new_category_text>')
+async def editNote(ctx, nameNote: str, category: str, categoryText: str):
+    print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
+    await ctx.reply(editNote(ctx, nameNote, category, categoryText))
 
 @bot.command(name='show', help='Show note. Ex: !show <note>')
 async def showNote(ctx, nameNote: str):
@@ -79,10 +83,15 @@ def embed(ctx, nameNote, response: str):
     embed.set_author(name="Sheila", url="https://twitter.com/RealDrewData",
                      icon_url="https://cdn-images-1.medium.com/fit/c/32/32/1*QVYjh50XJuOLQBeH_RZoGw.jpeg")
     # embed.set_author(name=ctx.author.display_name, url="https://twitter.com/RealDrewData", icon_url=ctx.author.avatar_url)
-    embed.set_thumbnail(url="https://i.imgur.com/axLm3p6.jpeg")
     response = response.replace("\'", "\"")
     print(response)
     response = json.loads(response)
+
+    if not (response.get('thumbnail') is None):
+        embed.set_thumbnail(url=response['thumbnail'])
+    else:
+        embed.set_thumbnail(url="https://i.imgur.com/axLm3p6.jpeg")
+
     print(response)
     for key, value in response.items():
         if (key == "dat_creation"):
@@ -90,7 +99,7 @@ def embed(ctx, nameNote, response: str):
             embed.add_field(name="**"+key.upper()+"**",
                             value=value, inline=False)
         else:
-            if (key != "dat_last_modified"):
+            if (key != "dat_last_modified" and key != "thumbnail"):
                 embed.add_field(name="**"+key.upper()+"**",
                                 value=value, inline=False)
 
@@ -136,8 +145,33 @@ def saveNote(ctx, nameNote, category, categoryText):
                 collection.update_one(filter, newvalues)
                 return '> Note **' + nameNote + '** updated with new category **' + category + '**.'
             else:
-                return '> Note **' + category + '** already exists! \n**Suggestion:**\n!edit <note> <category> <text-from-category>'
+                return '> Your note **' + nameNote + '** already exists with category **'+ category +'**. \n**Suggestion:**\n!edit <note> <category> <text-from-category>'
 
+def editNote(ctx, nameNote, category, categoryText):
+    queryUserExists = {"id_user": ctx.author.id}
+    userExists = collection.count_documents(queryUserExists)
+    if(userExists <= 0):
+        return "> You don't have any notes created. \n**Helpful commands:** \n!add <note> <new_category> <category_text> \n!show <note>"
+    else:
+        queryNoteExists = {"id_user": ctx.author.id,
+                           nameNote: {"$exists": True}}
+        noteExists = collection.count_documents(queryNoteExists)
+        if (noteExists <= 0):
+            return '> Note **'+nameNote+'** does not exists. \n**Helpful commands:** \n!show <note>\n!add <note> <new_category> <category_text>'
+        else:
+            queryNoteCategoryExists = {
+                "id_user": ctx.author.id, nameNote+'.'+category: {"$exists": True}}
+            noteCategoryExists = collection.count_documents(
+                queryNoteCategoryExists)
+            if(noteCategoryExists <= 0):
+                return '> Your note **' + nameNote + '** does not have this category **' + category + '**. \n**Helpful commands:** \n!show <note>\n!add <note> <new_category> <category_text>'
+            else:
+                filter = {"id_user": ctx.author.id,
+                          nameNote+'.'+category: {"$exists": True}}
+                newvalues = {"$set": {nameNote+'.'+category: categoryText, nameNote +
+                                      '.'+"dat_last_modified": datetime.today().replace(microsecond=0)}}
+                collection.update_one(filter, newvalues)
+                return '> Note **' + nameNote + '** updated with **success** with category **'+ category +'**! \n**Suggestion:** \n!show <note>'
 
 def save(ctx):
     myquery = {"_id": ctx.author.id}

@@ -70,7 +70,7 @@ async def showNote(ctx, nameNote: str):
 @bot.command(name='notes', help='Show yours notes. Ex: !notes')
 async def listNotes(ctx):
     print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
-    await findNoteByName(ctx, nameNote)
+    await findAllNotesByUser(ctx)
 
 def myconverter(o):
     if isinstance(o, datetime):
@@ -87,43 +87,43 @@ async def findNoteByName(ctx, nameNote):
         onlyNote['dat_creation'] = json.dumps(
             onlyNote['dat_creation'], default=myconverter)
         onlyNote = str(onlyNote).replace("\"", "")
-        return await ctx.reply(embed=embed(ctx, nameNote, onlyNote))
+        return await ctx.reply(embed=embedNote(ctx, nameNote, onlyNote))
     else:
         return await ctx.reply('> **' + nameNote + '** does not exists!')
 
-def embed(ctx, nameNote, response: str):
+async def findAllNotesByUser(ctx):
+    query = {"id_user": ctx.author.id, "notes": {"$exists": True}}
+    notes = collection.find(query)
+    for result in notes:
+        onlyNotes = json.dumps(result["notes"], default=myconverter)
+        print(onlyNotes)
+        return await ctx.reply(embed=embedNotes(ctx, onlyNotes))
+    else:
+        return await ctx.reply('> You does not have any notes.') 
+
+def embedNote(ctx, nameNote, response: str):
     response = response.replace("\'", "\"")
     response = json.loads(response)
 
     embed = discord.Embed(
         title=nameNote.capitalize(),
-        url="https://realdrewdata.medium.com/",
         description="||" +
-        "\n> **Date creation=**  " + (response.get('dat_creation') if response.get('dat_creation') != None else "") +
-        ("\n> **Date last modified=**  " + response.get('dat_last_modified') if response.get('dat_last_modified') != None else "") +
+        "\n> **created in=**  " + (response.get('dat_creation') if response.get('dat_creation') != None else "") +
+        ("\n> **last modified in=**  " + response.get('dat_last_modified') if response.get('dat_last_modified') != None else "") +
         "||",
         color=discord.Color.blue())
-    embed.set_author(name="HaruBot", url="https://twitter.com/RealDrewDatad",
-                     icon_url="https://i.pinimg.com/originals/b9/ee/eb/b9eeeb6c66879c91025108e8656b1ed0.jpg")
-    # embed.set_author(name=ctx.author.display_name, url="https://twitter.com/RealDrewData", icon_url=ctx.author.avatar_url)
+    embed.set_author(name="HaruBot", url="https://github.com/davidrezende",
+                     icon_url="https://pm1.narvii.com/6785/e1bd9318ab1d17b12a825427c5f7733813760b57v2_hq.jpg")
 
     if not (response.get('thumbnail') is None):
         embed.set_thumbnail(url=response['thumbnail'])
     else:
-        embed.set_thumbnail(url="https://i.imgur.com/axLm3p6.jpeg")
-
+        ''
     if not (response.get('image') is None):
         embed.set_image(url=response['image'])
     else:
-        embed.set_image(
-            url="https://i.pinimg.com/originals/b9/ee/eb/b9eeeb6c66879c91025108e8656b1ed0.jpg")
-
+        ''
     for key, value in response.items():
-        # if (key == "dat_creation"):
-        #     key = "date creation"
-        #     embed.add_field(name="**"+key.upper()+"**",
-        #                     value=value, inline=False)
-        # else:
         if (key != "dat_last_modified" and key != "thumbnail" and key != "dat_creation" and key != "image"):
             embed.add_field(name="**"+key.upper()+"**",
                             value=value, inline=False)
@@ -135,9 +135,23 @@ def embed(ctx, nameNote, response: str):
     # embed.add_field(name="`Code Chunks`", value="Surround your text in backticks (\`)", inline=False)
     # embed.add_field(name="Blockquotes", value="> Start your text with a greater than symbol (\>)", inline=False)
     # embed.add_field(name="Secrets", value="||Surround your text with double pipes (\|\|)||", inline=False)
-    embed.set_footer(text="About: haru-bot on Github")
+    embed.set_footer(text="Made with ❤️ by https://github.com/davidrezende")
     return embed
 
+
+def embedNotes(ctx, response: str):
+    response = response.replace("\'", "\"")
+    response = json.loads(response)
+    print('json',response)
+    embed = discord.Embed(
+        title="List of yours notes",
+        color=discord.Color.blue())
+    embed.set_author(name="HaruBot", url="https://github.com/davidrezende",
+                     icon_url="https://i.pinimg.com/originals/b9/ee/eb/b9eeeb6c66879c91025108e8656b1ed0.jpg")
+    for note in response:
+        embed.add_field(name="**"+note+"**", value='*created in: '+response[note]['dat_creation']+'*', inline=False)
+    embed.set_footer(text="Made with ❤️ by https://github.com/davidrezende")
+    return embed
 
 def validateWhenAddOrUpdateFieldsEmbed(category: str, categoryText: str):
     if category in ['image', 'thumbnail']:

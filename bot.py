@@ -24,26 +24,26 @@ cluster = MongoClient(CONNECTION, tlsCAFile=ca)
 db = cluster["harubotdb"]
 collection = db["UserData"]
 
-bot = commands.Bot(command_prefix='!', activity=discord.Activity(type=discord.ActivityType.listening, name="🎧"))
+bot = commands.Bot(command_prefix='$', activity=discord.Activity(type=discord.ActivityType.listening, name="🎧 $help"))
+
+# @commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
+# @bot.command(name='rq', help='Responds with a random quote.')
+# async def nine_nine(ctx):
+#     quotes = [
+#         'I\'m the human form of the 💯 emoji.',
+#         'Bingpot!',
+#         (
+#             'Cool. Cool cool cool cool cool cool cool, '
+#             'no doubt no doubt no doubt no doubt.'
+#         ),
+#     ]
+#     response = random.choice(quotes)
+#     await ctx.send(response)
 
 @commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
-@bot.command(name='rq', help='Responds with a random quote.')
-async def nine_nine(ctx):
-    quotes = [
-        'I\'m the human form of the 💯 emoji.',
-        'Bingpot!',
-        (
-            'Cool. Cool cool cool cool cool cool cool, '
-            'no doubt no doubt no doubt no doubt.'
-        ),
-    ]
-    response = random.choice(quotes)
-    await ctx.send(response)
-
-@commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
-@bot.command(name='rolldice', help='Simulates rolling dice. Ex: !rolldice <nrs_dice> <nrs_slides>')
+@bot.command(name='rolldice', help='Simulates rolling dice. Ex: $rolldice <num_dice> <num_slides>')
 async def roll(ctx, number_of_dice: int, number_of_sides: int):
-    print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
+    print(f"serverId: {ctx.guild.id} serverName:{ctx.guild.name} channel:{ctx.channel} user:{ctx.author}")
     dice = [
         str(random.choice(range(1, number_of_sides + 1)))
         for _ in range(number_of_dice)
@@ -51,39 +51,39 @@ async def roll(ctx, number_of_dice: int, number_of_sides: int):
     await ctx.reply('Rolling... ' + ', '.join(dice))
 
 @commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
-@bot.command(name='add', help='Add note. Ex: !add <note> <category> <category_text>')
+@bot.command(name='add', help='Add note. Ex: $add <note> <category> <category_text>')
 async def addNote(ctx, nameNote: str, category: str, categoryText: str):
-    print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
+    print(f"serverId: {ctx.guild.id} serverName:{ctx.guild.name} channel:{ctx.channel} user:{ctx.author}")
     if not validateWhenAddOrUpdateFieldsEmbed(category, categoryText):
         await ctx.reply('Invalid URL from image. Only HTTPS available.')
     else:
         await ctx.reply(saveNote(ctx, nameNote, category, categoryText))
 
 @commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
-@bot.command(name='edit', help='Edit note. Ex: !edit <note> <category> <new_category_text>')
+@bot.command(name='edit', help='Edit note. Ex: $edit <note> <category> <new_category_text>')
 async def editNote(ctx, nameNote: str, category: str, categoryText: str):
-    print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
+    print(f"serverId: {ctx.guild.id} serverName:{ctx.guild.name} channel:{ctx.channel} user:{ctx.author}")
     if not validateWhenAddOrUpdateFieldsEmbed(category, categoryText):
         await ctx.reply('Invalid URL from image. Only HTTPS available.')
     else:
         await ctx.reply(editNote(ctx, nameNote, category, categoryText))
 
 @commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
-@bot.command(name='rm', help='Remove note or category of an note. Ex: !rm <note> <optional_category>')
+@bot.command(name='rm', help='Remove note or category of an note. Ex: $rm <note> <optional_category>')
 async def removeNote(ctx, nameNote: str, category: str = None):
-    print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
+    print(f"serverId: {ctx.guild.id} serverName:{ctx.guild.name} channel:{ctx.channel} user:{ctx.author}")
     await ctx.reply(deleteNoteOrCategory(ctx, nameNote, category))
 
 @commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
-@bot.command(name='show', help='Show note. Ex: !show <note>')
+@bot.command(name='show', help='Show note. Ex: $show <note>')
 async def showNote(ctx, nameNote: str):
-    print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
+    print(f"serverId: {ctx.guild.id} serverName:{ctx.guild.name} channel:{ctx.channel} user:{ctx.author}")
     await findNoteByName(ctx, nameNote)
 
 @commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
-@bot.command(name='notes', help='Show yours notes. Ex: !notes')
+@bot.command(name='notes', help='Show yours notes. Ex: $notes')
 async def listNotes(ctx):
-    print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
+    print(f"serverId: {ctx.guild.id} serverName:{ctx.guild.name} channel:{ctx.channel} user:{ctx.author}")
     await findAllNotesByUser(ctx)
 
 def myconverter(o):
@@ -123,8 +123,8 @@ def embedNote(ctx, nameNote, response: str):
         title=nameNote.capitalize(),
         description=
         # "||" +
-        "\n**created in=**  " + (response.get('dat_creation') if response.get('dat_creation') != None else "") +
-        ("\n**last modified in=**  " + response.get('dat_last_modified') if response.get('dat_last_modified') != None else ""),
+        "\n> **created in=**  " + (response.get('dat_creation') if response.get('dat_creation') != None else "") +
+        ("\n> **last modified in=**  " + response.get('dat_last_modified') if response.get('dat_last_modified') != None else ""),
         # "||",
         color=discord.Color.blue())
     embed.set_author(name="HaruBot", url="https://github.com/davidrezende",
@@ -159,7 +159,7 @@ def embedNotes(ctx, response: str):
     response = json.loads(response)
     print('json',response)
     embed = discord.Embed(
-        title="List of yours notes",
+        title="Yours notes",
         color=discord.Color.blue())
     embed.set_author(name="HaruBot", url="https://github.com/davidrezende",
                      icon_url="https://yt3.ggpht.com/ytc/AAUvwnjEgzJBHFJKcDdmdF6Y4aHnmUMCJhsmVPnCHYYEQQ=s900-c-k-c0x00ffffff-no-rj")
@@ -185,7 +185,7 @@ def saveNote(ctx, nameNote, category, categoryText):
     if(userExists <= 0):
         post = {"id_user": ctx.author.id, "dat_creation": datetime.today().replace(microsecond=0), "notes": { nameNote: { category: categoryText, "dat_creation": datetime.today().replace(microsecond=0)}}}
         collection.insert_one(post)
-        return '> **' + ctx.author.name + ' congratulations!** You have created your first note: **' + nameNote + '**.\n**Helpful commands:** \n!show <note>\n!add <note> <new_category> <category_text>'
+        return '> **' + ctx.author.name + ' congratulations!** You have created your first note: **' + nameNote + '**.\n**Helpful commands:** \n$show <note>\n$add <note> <new_category> <category_text>'
     else:
         queryNoteExists = {"id_user": ctx.author.id,
                            "notes"+"."+nameNote: {"$exists": True}}
@@ -214,13 +214,13 @@ def deleteNoteOrCategory(ctx, nameNote, category):
     queryUserExists = {"id_user": ctx.author.id}
     userExists = collection.count_documents(queryUserExists)
     if(userExists <= 0):
-        return "> You don't have any notes created. Start by creating your first note.\n+**Helpful commands:** \n!show <note>\n!add <note> <new_category> <category_text>"
+        return "> You don't have any notes created. Start by creating your first note.\n+**Helpful commands:** \n$show <note>\n$add <note> <new_category> <category_text>"
     else:
         queryNoteExists = {"id_user": ctx.author.id,
                            "notes"+"."+nameNote: {"$exists": True}}
         noteExists = collection.count_documents(queryNoteExists)
         if (noteExists <= 0):
-            return '> **' + nameNote + '** does not exists!\n+**Helpful commands:** \n!show <note>\n!add <note> <new_category> <category_text>'
+            return '> **' + nameNote + '** does not exists!\n+**Helpful commands:** \n$show <note>\n$add <note> <new_category> <category_text>'
         else:
             if category is None:
                 filter = {"id_user": ctx.author.id}
@@ -244,18 +244,18 @@ def editNote(ctx, nameNote, category, categoryText):
     queryUserExists = {"id_user": ctx.author.id}
     userExists = collection.count_documents(queryUserExists)
     if(userExists <= 0):
-        return "> You don't have any notes created. \n**Helpful commands:** \n!add <note> <new_category> <category_text> \n!show <note>"
+        return "> You don't have any notes created. \n**Helpful commands:** \n$add <note> <new_category> <category_text> \n$show <note>"
     else:
         queryNoteExists = {"id_user": ctx.author.id,
                            "notes"+"."+nameNote: {"$exists": True}}
         noteExists = collection.count_documents(queryNoteExists)
         if (noteExists <= 0):
-            return '> Note **'+nameNote+'** does not exists. \n**Helpful commands:** \n!show <note>\n!add <note> <new_category> <category_text>'
+            return '> Note **'+nameNote+'** does not exists. \n**Helpful commands:** \n$show <note>\n$add <note> <new_category> <category_text>'
         else:
             queryNoteCategoryExists = {"id_user": ctx.author.id, "notes"+"."+nameNote+'.'+category: {"$exists": True}}
             noteCategoryExists = collection.count_documents(queryNoteCategoryExists)
             if(noteCategoryExists <= 0):
-                return '> Your note **' + nameNote + '** does not have this category **' + category + '**. \n**Helpful commands:** \n!show <note>\n!add <note> <new_category> <category_text>'
+                return '> Your note **' + nameNote + '** does not have this category **' + category + '**. \n**Helpful commands:** \n$show <note>\n$add <note> <new_category> <category_text>'
             else:
                 filter = {"id_user": ctx.author.id,
                           "notes"+"."+nameNote+'.'+category: {"$exists": True}}
@@ -264,14 +264,14 @@ def editNote(ctx, nameNote, category, categoryText):
                 collection.update_one(filter, newvalues)
                 return '> Note **' + nameNote + '** updated with **success** with category **' + category + '**! \n**Suggestion:** \n!show <note>'
 
-@bot.command(name='create-channel')
-@commands.has_role('admin')
-async def create_channel(ctx, channel_name='real-python'):
-    guild = ctx.guild
-    existing_channel = discord.utils.get(guild.channels, name=channel_name)
-    if not existing_channel:
-        print(f'Creating a new channel: {channel_name}')
-        await guild.create_text_channel(channel_name)
+# @bot.command(name='create-channel')
+# @commands.has_role('admin')
+# async def create_channel(ctx, channel_name='real-python'):
+#     guild = ctx.guild
+#     existing_channel = discord.utils.get(guild.channels, name=channel_name)
+#     if not existing_channel:
+#         print(f'Creating a new channel: {channel_name}')
+#         await guild.create_text_channel(channel_name)
 
 
 @bot.event

@@ -1,5 +1,6 @@
 import json
 import os
+import profile
 import random
 from contextlib import nullcontext
 from datetime import datetime, timedelta
@@ -23,9 +24,23 @@ cluster = MongoClient(CONNECTION, tlsCAFile=ca)
 db = cluster["harubotdb"]
 collection = db["UserData"]
 
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='!', activity=discord.Activity(type=discord.ActivityType.listening, name="🎧"))
 
+@commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
+@bot.command(name='rq', help='Responds with a random quote.')
+async def nine_nine(ctx):
+    quotes = [
+        'I\'m the human form of the 💯 emoji.',
+        'Bingpot!',
+        (
+            'Cool. Cool cool cool cool cool cool cool, '
+            'no doubt no doubt no doubt no doubt.'
+        ),
+    ]
+    response = random.choice(quotes)
+    await ctx.send(response)
 
+@commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
 @bot.command(name='rolldice', help='Simulates rolling dice. Ex: !rolldice <nrs_dice> <nrs_slides>')
 async def roll(ctx, number_of_dice: int, number_of_sides: int):
     print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
@@ -33,10 +48,9 @@ async def roll(ctx, number_of_dice: int, number_of_sides: int):
         str(random.choice(range(1, number_of_sides + 1)))
         for _ in range(number_of_dice)
     ]
-    # save(ctx)
     await ctx.reply('Rolling... ' + ', '.join(dice))
 
-
+@commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
 @bot.command(name='add', help='Add note. Ex: !add <note> <category> <category_text>')
 async def addNote(ctx, nameNote: str, category: str, categoryText: str):
     print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
@@ -45,7 +59,7 @@ async def addNote(ctx, nameNote: str, category: str, categoryText: str):
     else:
         await ctx.reply(saveNote(ctx, nameNote, category, categoryText))
 
-
+@commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
 @bot.command(name='edit', help='Edit note. Ex: !edit <note> <category> <new_category_text>')
 async def editNote(ctx, nameNote: str, category: str, categoryText: str):
     print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
@@ -54,23 +68,23 @@ async def editNote(ctx, nameNote: str, category: str, categoryText: str):
     else:
         await ctx.reply(editNote(ctx, nameNote, category, categoryText))
 
-
-@bot.command(name='rm', help='Add note. Ex: !rm <note> <optional_category>')
+@commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
+@bot.command(name='rm', help='Remove note or category of an note. Ex: !rm <note> <optional_category>')
 async def removeNote(ctx, nameNote: str, category: str = None):
     print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
     await ctx.reply(deleteNoteOrCategory(ctx, nameNote, category))
 
-
+@commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
 @bot.command(name='show', help='Show note. Ex: !show <note>')
 async def showNote(ctx, nameNote: str):
     print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
     await findNoteByName(ctx, nameNote)
 
-    
+@commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
 @bot.command(name='notes', help='Show yours notes. Ex: !notes')
 async def listNotes(ctx):
     print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}")
-    await findNoteByName(ctx, nameNote)
+    await findAllNotesByUser(ctx)
 
 def myconverter(o):
     if isinstance(o, datetime):
@@ -87,43 +101,44 @@ async def findNoteByName(ctx, nameNote):
         onlyNote['dat_creation'] = json.dumps(
             onlyNote['dat_creation'], default=myconverter)
         onlyNote = str(onlyNote).replace("\"", "")
-        return await ctx.reply(embed=embed(ctx, nameNote, onlyNote))
+        return await ctx.reply(embed=embedNote(ctx, nameNote, onlyNote))
     else:
         return await ctx.reply('> **' + nameNote + '** does not exists!')
 
-def embed(ctx, nameNote, response: str):
+async def findAllNotesByUser(ctx):
+    query = {"id_user": ctx.author.id, "notes": {"$exists": True}}
+    notes = collection.find(query)
+    for result in notes:
+        onlyNotes = json.dumps(result["notes"], default=myconverter)
+        print(onlyNotes)
+        return await ctx.reply(embed=embedNotes(ctx, onlyNotes))
+    else:
+        return await ctx.reply('> You does not have any notes.') 
+
+def embedNote(ctx, nameNote, response: str):
     response = response.replace("\'", "\"")
     response = json.loads(response)
 
     embed = discord.Embed(
         title=nameNote.capitalize(),
-        url="https://realdrewdata.medium.com/",
-        description="||" +
-        "\n> **Date creation=**  " + (response.get('dat_creation') if response.get('dat_creation') != None else "") +
-        ("\n> **Date last modified=**  " + response.get('dat_last_modified') if response.get('dat_last_modified') != None else "") +
-        "||",
+        description=
+        # "||" +
+        "\n**created in=**  " + (response.get('dat_creation') if response.get('dat_creation') != None else "") +
+        ("\n**last modified in=**  " + response.get('dat_last_modified') if response.get('dat_last_modified') != None else ""),
+        # "||",
         color=discord.Color.blue())
-    embed.set_author(name="HaruBot", url="https://twitter.com/RealDrewDatad",
-                     icon_url="https://i.pinimg.com/originals/b9/ee/eb/b9eeeb6c66879c91025108e8656b1ed0.jpg")
-    # embed.set_author(name=ctx.author.display_name, url="https://twitter.com/RealDrewData", icon_url=ctx.author.avatar_url)
+    embed.set_author(name="HaruBot", url="https://github.com/davidrezende",
+                     icon_url="https://yt3.ggpht.com/ytc/AAUvwnjEgzJBHFJKcDdmdF6Y4aHnmUMCJhsmVPnCHYYEQQ=s900-c-k-c0x00ffffff-no-rj")
 
     if not (response.get('thumbnail') is None):
         embed.set_thumbnail(url=response['thumbnail'])
     else:
-        embed.set_thumbnail(url="https://i.imgur.com/axLm3p6.jpeg")
-
+        ''
     if not (response.get('image') is None):
         embed.set_image(url=response['image'])
     else:
-        embed.set_image(
-            url="https://i.pinimg.com/originals/b9/ee/eb/b9eeeb6c66879c91025108e8656b1ed0.jpg")
-
+        ''
     for key, value in response.items():
-        # if (key == "dat_creation"):
-        #     key = "date creation"
-        #     embed.add_field(name="**"+key.upper()+"**",
-        #                     value=value, inline=False)
-        # else:
         if (key != "dat_last_modified" and key != "thumbnail" and key != "dat_creation" and key != "image"):
             embed.add_field(name="**"+key.upper()+"**",
                             value=value, inline=False)
@@ -135,9 +150,23 @@ def embed(ctx, nameNote, response: str):
     # embed.add_field(name="`Code Chunks`", value="Surround your text in backticks (\`)", inline=False)
     # embed.add_field(name="Blockquotes", value="> Start your text with a greater than symbol (\>)", inline=False)
     # embed.add_field(name="Secrets", value="||Surround your text with double pipes (\|\|)||", inline=False)
-    embed.set_footer(text="About: haru-bot on Github")
+    embed.set_footer(text="Made with ❤️ by https://github.com/davidrezende")
     return embed
 
+
+def embedNotes(ctx, response: str):
+    response = response.replace("\'", "\"")
+    response = json.loads(response)
+    print('json',response)
+    embed = discord.Embed(
+        title="List of yours notes",
+        color=discord.Color.blue())
+    embed.set_author(name="HaruBot", url="https://github.com/davidrezende",
+                     icon_url="https://yt3.ggpht.com/ytc/AAUvwnjEgzJBHFJKcDdmdF6Y4aHnmUMCJhsmVPnCHYYEQQ=s900-c-k-c0x00ffffff-no-rj")
+    for note in response:
+        embed.add_field(name="**"+note+"**", value='*created in: '+response[note]['dat_creation']+'*', inline=False)
+    embed.set_footer(text="Made with ❤️ by https://github.com/davidrezende")
+    return embed
 
 def validateWhenAddOrUpdateFieldsEmbed(category: str, categoryText: str):
     if category in ['image', 'thumbnail']:
@@ -234,37 +263,6 @@ def editNote(ctx, nameNote, category, categoryText):
                                       '.'+"dat_last_modified": datetime.today().replace(microsecond=0)}}
                 collection.update_one(filter, newvalues)
                 return '> Note **' + nameNote + '** updated with **success** with category **' + category + '**! \n**Suggestion:** \n!show <note>'
-
-
-def save(ctx):
-    myquery = {"_id": ctx.author.id}
-    if (collection.count_documents(myquery) == 0):
-        post = {"_id": ctx.author.id, "score": 1}
-        collection.insert_one(post)
-    else:
-        query = {"_id": ctx.author.id}
-        user = collection.find(query)
-        for result in user:
-            print(result)
-            score = result["score"]
-        score = score + 1
-        collection.update_one({"_id": ctx.author.id}, {
-                              "$set": {"score": score}})
-
-
-@bot.command(name='99', help='Responds with a random quote from Brooklyn 99')
-async def nine_nine(ctx):
-    brooklyn_99_quotes = [
-        'I\'m the human form of the 💯 emoji.',
-        'Bingpot!',
-        (
-            'Cool. Cool cool cool cool cool cool cool, '
-            'no doubt no doubt no doubt no doubt.'
-        ),
-    ]
-    response = random.choice(brooklyn_99_quotes)
-    await ctx.send(response)
-
 
 @bot.command(name='create-channel')
 @commands.has_role('admin')

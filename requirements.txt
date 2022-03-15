@@ -1,0 +1,5 @@
+certifi
+discord.py
+pymongo
+python-dotenv
+dnspython

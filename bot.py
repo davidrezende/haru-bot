@@ -1,15 +1,10 @@
 import json
 import os
-import profile
 import random
-from contextlib import nullcontext
-from datetime import datetime, timedelta
-from tkinter import Y
-from unicodedata import name
+from datetime import datetime
 
 import certifi
 import discord
-import pymongo
 from discord.ext import commands
 from dotenv import load_dotenv
 from pymongo import MongoClient

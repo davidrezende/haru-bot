@@ -81,4 +81,4 @@ Ex: $rm bruce-profile
 
 ### Contact
 
-Are you having problems? Open an **issue** in the [repositório](https://github.com/davidrezende/haru-bot/) or check the available contact channels on my [github profile](https://github.com/davidrezende)
+Are you having problems? Open an **issue** in the [repository](https://github.com/davidrezende/haru-bot/) or check the available contact channels on my [github profile](https://github.com/davidrezende)

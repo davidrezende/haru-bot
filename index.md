@@ -1,14 +1,14 @@
-## Sobre
+## About
 
-Crie, personalize e gerencie anotações. Você tem acesso a suas notas em qualquer servidor em que o bot também faça parte.
+Create, customize and manage annotations. You have access to your notes on any server the bot is also a part of.
 
-Utilize sua criatividade com as notas, crie fichas de jogos, seu diário ou simplesmente para salvar alguma informação importante.
+Use your creativity with notes, create game cards, your diary or simply to save some important information.
 
-**ILIMITADO!** Atualmente você pode criar anotações **ILIMITADAS** com um número de categorias/campos **ILIMITADAS** em cada uma delas.
+**UNLIMITED!** Currently you can create **UNLIMITED** annotations with an **UNLIMITED** number of categories/fields in each of them.
 
-### Formato de uma nota
+### Format of a note
 
-Uma nota tem seu **nome** e suas **categorias**, dais quais devem possuir algum **texto**.
+A note has its **name** and **categories** , of which it must have some **text** .
 
 ```
 note
@@ -32,46 +32,46 @@ note999
     --->text
 ```
 
-### Comandos
+### Commands
 
-O **prefixo padrão** do bot é o: **$**
+The bot's **default prefix** is the: **$**
 
-Para verificar **todos os comandos** atuais, digite **$help** em algum canal o qual o bot tenha permissões.
+To check **all current commands**, **type $help** in any channel which the bot has permissions.
 
-**Principais comandos:**
-- **Criar uma nova nota** ( **para criar uma nova nota é necessário criar também um campo** )
+**Main commands:**
+- **Create a new note ( to create a new note it is also necessary to create a field )** 
 ```
 $add <nome_da_nota> <"nome_da_categoria"> <"texto">
 ```
 ```
 Ex: $add joselito-profile "nick" "Batman"
 ```
-- **Listar todas as suas notas**
+- **List all your notes**
 ```
 $notes
 ```
-- **Mostrar uma nota**
+- **Show a note**
 ```
 $show <nome_da_nota_existente>
 ```
 ```
 Ex: $show joselito-profile
 ```
-- **Editar uma categoria de uma nota**
+- **Edit a note category**
 ```
 $edit <nome_da_nota_existente> <"nome_da_categoria_existente"> <"novo_texto">
 ```
 ```
 Ex: $edit joselito-profile "nick" "Robin"
 ```
-- **Deletar uma categoria/campo de uma nota**
+- **Remove a category/field from a note**
 ```
 $rm <nome_da_nota_existente> <"nome_da_categoria_existente">
 ```
 ```
 Ex: $rm joselito-profile "nick"
 ```
-- **Deletar uma nota**
+- **Remove a note**
 ```
 $rm <nome_da_nota_existente>
 ```
@@ -79,6 +79,6 @@ $rm <nome_da_nota_existente>
 Ex: $rm joselito-profile
 ```
 
-### Contato
+### Contact
 
-Está tendo problemas? Abra uma **issue** no [repositório](https://github.com/davidrezende/haru-bot/) ou verifique os canais de contato disponíveis no meu perfil do [github](https://github.com/davidrezende)
+Are you having problems? Open an **issue** in the [repositório](https://github.com/davidrezende/haru-bot/) or check the available contact channels on my [github profile](https://github.com/davidrezende)

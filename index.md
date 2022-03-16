@@ -41,10 +41,10 @@ To check **all current commands**, **type $help** in any channel which the bot h
 **Main commands:**
 - **Create a new note ( to create a new note it is also necessary to create a field )** 
 ```
-$add <nome_da_nota> <"nome_da_categoria"> <"texto">
+$add <name_of_note> <"name_of_category"> <"text">
 ```
 ```
-Ex: $add joselito-profile "nick" "Batman"
+Ex: $add bruce-profile "nick" "Batman"
 ```
 - **List all your notes**
 ```
@@ -52,31 +52,31 @@ $notes
 ```
 - **Show a note**
 ```
-$show <nome_da_nota_existente>
+$show <name_of_note>
 ```
 ```
-Ex: $show joselito-profile
+Ex: $show bruce-profile
 ```
 - **Edit a note category**
 ```
-$edit <nome_da_nota_existente> <"nome_da_categoria_existente"> <"novo_texto">
+$edit <name_of_note_exists> <"name_of_category_exists"> <"new_text">
 ```
 ```
-Ex: $edit joselito-profile "nick" "Robin"
+Ex: $edit bruce-profile "nick" "Robin"
 ```
 - **Remove a category/field from a note**
 ```
-$rm <nome_da_nota_existente> <"nome_da_categoria_existente">
+$rm <name_of_note_exists> <"name_of_category_exists">
 ```
 ```
-Ex: $rm joselito-profile "nick"
+Ex: $rm bruce-profile "nick"
 ```
 - **Remove a note**
 ```
-$rm <nome_da_nota_existente>
+$rm <name_of_note_exists>
 ```
 ```
-Ex: $rm joselito-profile
+Ex: $rm bruce-profile
 ```
 
 ### Contact

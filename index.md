@@ -32,13 +32,13 @@ note999
     --->text
 ```
 
-## Comandos
+### Comandos
 
 O **prefixo padrão** do bot é o: **$**
 
 Para verificar **todos os comandos** atuais, digite **$help** em algum canal o qual o bot tenha permissões.
 
-### **Principais comandos:**
+**Principais comandos:**
 - **Criar uma nova nota** ( **para criar uma nova nota é necessário criar também um campo** )
 ```
 $add <nome_da_nota> <"nome_da_categoria"> <"texto">
@@ -79,6 +79,6 @@ $rm <nome_da_nota_existente>
 Ex: $rm joselito-profile
 ```
 
-## Contato
+### Contato
 
 Está tendo problemas? Abra uma **issue** no [repositório](https://github.com/davidrezende/haru-bot/) ou verifique os canais de contato disponíveis no meu perfil do [github](https://github.com/davidrezende)

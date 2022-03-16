@@ -1,22 +1,84 @@
-## Welcome to GitHub Pages
+## Bem vindo ao HaruBot
 
-You can use the [editor on GitHub](https://github.com/davidrezende/haru-bot/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+Crie, personalize e gerencie anotações. Você tem acesso a suas notas em qualquer servidor em que o bot também faça parte.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Utilize sua criatividade com as notas, crie notas para fichas de jogos, seu diário ou simplesmente para salvar alguma informação importante.
 
-### Markdown
+**É ILIMITADO!** Atualmente você pode criar anotações **ILIMITADAS** com um número de categorias/campos **ILIMITADAS** em cada uma delas.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+### Formato de uma nota
 
-```markdown
-Syntax highlighted code block
+Uma nota tem seu **nome** e suas **cateogorias**, dais quais devem possuir algum **texto**.
 
-# Header 1
-## Header 2
-### Header 3
+Exemplo:
+```
+--->note
+    --->category1
+        --->text
+        
+    --->(...)    
+        
+    --->category999
+        --->text
+        
+--->(...)     
 
-- Bulleted
-- List
+--->note999
+    --->category1
+        --->text
+        
+    --->(...)    
+        
+    --->category999
+        --->text
+```
+
+### Comandos
+
+O **prefixo padrão** do bot é o: **$**
+
+Para verificar **todos os comandos** atuais, digite **$help** em algum canal o qual o bot tenha permissões.
+
+**Principais comandos:**
+- Criar uma nova nota ( para criar uma nova nota é necessário criar um campo obrigatoriamente )
+```
+$add <nome_da_nota> <"nome_da_categoria"> <"texto">
+```
+```
+Ex: $add joselito-profile "nick" "Batman"
+```
+- Listar todas as suas notas
+```
+$notes
+```
+- Mostrar uma nota
+```
+$show <nome_da_nota_existente>
+```
+```
+Ex: $show joselito-profile
+```
+- Editar uma categoria de uma nota
+```
+$edit <nome_da_nota_existente> <"nome_da_categoria_existente"> <"novo_texto">
+```
+```
+Ex: $edit joselito-profile "nick" "Robin"
+```
+- Deletar uma categoria/campo de uma nota
+```
+$rm <nome_da_nota_existente> <"nome_da_categoria_existente">
+```
+```
+Ex: $rm joselito-profile "nick"
+```
+- Deletar uma nota
+```
+$rm <nome_da_nota_existente>
+```
+```
+Ex: $rm joselito-profile
+```
 
 1. Numbered
 2. List

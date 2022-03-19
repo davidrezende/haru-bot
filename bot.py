@@ -142,8 +142,8 @@ def embedNote(ctx, nameNote, response: str):
         "|| > **created in=**  " + (response.get('dat_creation') if response.get('dat_creation') != None else "") + "\n"
         "> **last modified in=**  " + (response.get('dat_last_modified') if response.get('dat_last_modified') != None else "") + " ||",
         color=discord.Color.blue())
-    embed.set_author(name="LeafCard", url="https://github.com/davidrezende",
-                     icon_url="https://yt3.ggpht.com/ytc/AAUvwnjEgzJBHFJKcDdmdF6Y4aHnmUMCJhsmVPnCHYYEQQ=s900-c-k-c0x00ffffff-no-rj")
+    embed.set_author(name="LeafCard", url="https://davidrezende.github.io/leafcard-bot/",
+                     icon_url="http://1.bp.blogspot.com/-6X59rl_zVks/T74-l3EC2EI/AAAAAAAABSM/LW2RE3RGjJw/s1600/Texugo.png")
 
     if not (response.get('thumbnail') is None):
         embed.set_thumbnail(url=response['thumbnail'])
@@ -176,8 +176,8 @@ def embedNotes(ctx, response: str):
     embed = discord.Embed(
         title="Yours notes",
         color=discord.Color.blue())
-    embed.set_author(name="LeafCard", url="https://github.com/davidrezende",
-                     icon_url="https://yt3.ggpht.com/ytc/AAUvwnjEgzJBHFJKcDdmdF6Y4aHnmUMCJhsmVPnCHYYEQQ=s900-c-k-c0x00ffffff-no-rj")
+    embed.set_author(name="LeafCard", url="https://davidrezende.github.io/leafcard-bot/",
+                     icon_url="http://1.bp.blogspot.com/-6X59rl_zVks/T74-l3EC2EI/AAAAAAAABSM/LW2RE3RGjJw/s1600/Texugo.png")
     for note in response:
         embed.add_field(name="**"+note+"**", value='*created in: '+response[note]['dat_creation']+'*', inline=False)
     embed.set_footer(text="Made with ❤️ by https://github.com/davidrezende")

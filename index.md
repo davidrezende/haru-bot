@@ -1,4 +1,5 @@
 ## About
+[![GitHub](https://img.shields.io/badge/Invite%20LeafCard%20to%20your%20server-blue)](https://discord.com/api/oauth2/authorize?client_id=952058655979749416&permissions=326417770496&scope=bot)
 
 Create, customize and manage annotations. You have access to your notes on any server the bot is also a part of.
 
@@ -82,3 +83,6 @@ Ex: $rm bruce-profile
 ### Contact
 
 Are you having problems? Open an **issue** in the [repository](https://github.com/davidrezende/haru-bot/) or check the available contact channels on my [github profile](https://github.com/davidrezende)
+
+[![GitHub](https://img.shields.io/github/followers/davidrezende?style=social)](https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fdavidrezende)
+

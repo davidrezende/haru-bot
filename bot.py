@@ -75,11 +75,11 @@ async def showNote(ctx, nameNote: str):
     print(f"serverId: {ctx.guild.id} serverName:{ctx.guild.name} channel:{ctx.channel} user:{ctx.author}")
     await findNoteByName(ctx, nameNote)
 
-@commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
-@bot.command(name='random', help='Show a random note public. Ex: $random')
-async def showNote(ctx):
-    print(f"serverId: {ctx.guild.id} serverName:{ctx.guild.name} channel:{ctx.channel} user:{ctx.author}")
-    await findRandomNote(ctx)
+# @commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
+# @bot.command(name='random', help='Show a random note public. Ex: $random')
+# async def showNote(ctx):
+#     print(f"serverId: {ctx.guild.id} serverName:{ctx.guild.name} channel:{ctx.channel} user:{ctx.author}")
+#     await findRandomNote(ctx)
 
 @commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
 @bot.command(name='notes', help='Show yours notes. Ex: $notes')

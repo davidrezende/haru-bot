@@ -76,6 +76,12 @@ async def showNote(ctx, nameNote: str):
     await findNoteByName(ctx, nameNote)
 
 @commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
+@bot.command(name='random', help='Show a random note public. Ex: $random')
+async def showNote(ctx):
+    print(f"serverId: {ctx.guild.id} serverName:{ctx.guild.name} channel:{ctx.channel} user:{ctx.author}")
+    await findRandomNote(ctx)
+
+@commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
 @bot.command(name='notes', help='Show yours notes. Ex: $notes')
 async def listNotes(ctx):
     print(f"serverId: {ctx.guild.id} serverName:{ctx.guild.name} channel:{ctx.channel} user:{ctx.author}")
@@ -100,6 +106,22 @@ async def findNoteByName(ctx, nameNote):
     else:
         return await ctx.reply('> **' + nameNote + '** does not exists!')
 
+async def findRandomNote(ctx):
+    query = [{"notes": [{"$match" :{"visibility":"public"}}]}]
+    notes = collection.aggregate(query)
+    for result in notes:
+        print(result)
+    # if(notes):
+    #     onlyNote = note['notes'][nameNote]
+    #     onlyNote['dat_last_modified'] = json.dumps(
+    #         onlyNote['dat_last_modified'], default=myconverter) if 'dat_last_modified' in onlyNote else 'none'
+    #     onlyNote['dat_creation'] = json.dumps(
+    #         onlyNote['dat_creation'], default=myconverter)
+    #     onlyNote = str(onlyNote).replace("\"", "")
+    #     return await ctx.reply(embed=embedNote(ctx, nameNote, onlyNote))
+    # else:
+    return await ctx.reply('> ** hehehe ** does not exists!')
+
 async def findAllNotesByUser(ctx):
     query = {"id_user": ctx.author.id, "notes": {"$exists": True}}
     notes = collection.find(query)
@@ -117,12 +139,10 @@ def embedNote(ctx, nameNote, response: str):
     embed = discord.Embed(
         title=nameNote.capitalize(),
         description=
-        # "||" +
-        "\n> **created in=**  " + (response.get('dat_creation') if response.get('dat_creation') != None else "") +
-        ("\n> **last modified in=**  " + response.get('dat_last_modified') if response.get('dat_last_modified') != None else ""),
-        # "||",
+        "|| > **created in=**  " + (response.get('dat_creation') if response.get('dat_creation') != None else "") + "\n"
+        "> **last modified in=**  " + (response.get('dat_last_modified') if response.get('dat_last_modified') != None else "") + " ||",
         color=discord.Color.blue())
-    embed.set_author(name="HaruBot", url="https://github.com/davidrezende",
+    embed.set_author(name="LeafCard", url="https://github.com/davidrezende",
                      icon_url="https://yt3.ggpht.com/ytc/AAUvwnjEgzJBHFJKcDdmdF6Y4aHnmUMCJhsmVPnCHYYEQQ=s900-c-k-c0x00ffffff-no-rj")
 
     if not (response.get('thumbnail') is None):
@@ -156,7 +176,7 @@ def embedNotes(ctx, response: str):
     embed = discord.Embed(
         title="Yours notes",
         color=discord.Color.blue())
-    embed.set_author(name="HaruBot", url="https://github.com/davidrezende",
+    embed.set_author(name="LeafCard", url="https://github.com/davidrezende",
                      icon_url="https://yt3.ggpht.com/ytc/AAUvwnjEgzJBHFJKcDdmdF6Y4aHnmUMCJhsmVPnCHYYEQQ=s900-c-k-c0x00ffffff-no-rj")
     for note in response:
         embed.add_field(name="**"+note+"**", value='*created in: '+response[note]['dat_creation']+'*', inline=False)

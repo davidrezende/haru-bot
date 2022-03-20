@@ -46,6 +46,18 @@ async def roll(ctx, number_of_dice: int, number_of_sides: int):
     await ctx.reply('Rolling... ' + ', '.join(dice))
 
 @commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
+@bot.command(name='doc', help='See official information about commands. Ex: $doc')
+async def roll(ctx):
+    print(f"serverId: {ctx.guild.id} serverName:{ctx.guild.name} channel:{ctx.channel} user:{ctx.author}")
+    await ctx.reply('Official documentation: https://davidrezende.github.io/leafcard-bot/')
+
+@commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
+@bot.command(name='vote', help='Help me, leave a comment and vote. Ex: $vote')
+async def roll(ctx):
+    print(f"serverId: {ctx.guild.id} serverName:{ctx.guild.name} channel:{ctx.channel} user:{ctx.author}")
+    await ctx.reply('Help me 😬 leave a comment and vote : https://top.gg/bot/952058655979749416')
+
+@commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
 @bot.command(name='add', help='Add note. Ex: $add <note> <category> <category_text>')
 async def addNote(ctx, nameNote: str, category: str, categoryText: str):
     print(f"serverId: {ctx.guild.id} serverName:{ctx.guild.name} channel:{ctx.channel} user:{ctx.author}")
@@ -165,7 +177,7 @@ def embedNote(ctx, nameNote, response: str):
     # embed.add_field(name="`Code Chunks`", value="Surround your text in backticks (\`)", inline=False)
     # embed.add_field(name="Blockquotes", value="> Start your text with a greater than symbol (\>)", inline=False)
     # embed.add_field(name="Secrets", value="||Surround your text with double pipes (\|\|)||", inline=False)
-    embed.set_footer(text="Made with ❤️ by https://github.com/davidrezende")
+    embed.set_footer(text="Made with ❤️ Support me vote https://top.gg/bot/952058655979749416")
     return embed
 
 
@@ -180,7 +192,7 @@ def embedNotes(ctx, response: str):
                      icon_url="http://1.bp.blogspot.com/-6X59rl_zVks/T74-l3EC2EI/AAAAAAAABSM/LW2RE3RGjJw/s1600/Texugo.png")
     for note in response:
         embed.add_field(name="**"+note+"**", value='*created in: '+response[note]['dat_creation']+'*', inline=False)
-    embed.set_footer(text="Made with ❤️ by https://github.com/davidrezende")
+    embed.set_footer(text="Made with ❤️ Support me vote https://top.gg/bot/952058655979749416")
     return embed
 
 def validateWhenAddOrUpdateFieldsEmbed(category: str, categoryText: str):

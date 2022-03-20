@@ -33,40 +33,41 @@ The bot's **default prefix** is the: **$**
 
 To check **all current commands**, **type $help** in any channel which the bot has permissions.
 
-**Main commands:**
-- **Create a new note ( to create a new note it is also necessary to create a field )** 
+
+
+**Create a new note ( to create a new note it is also necessary to create a field )** 
 ```
 $add <name_of_note> <"name_of_category"> <"text">
 ```
 ```
 Ex: $add bruce-profile "nick" "Batman"
 ```
-- **List all your notes**
+**List all your notes**
 ```
 $notes
 ```
-- **Show a note**
+**Show a note**
 ```
 $show <name_of_note>
 ```
 ```
 Ex: $show bruce-profile
 ```
-- **Edit a note category**
+**Edit a note category**
 ```
 $edit <name_of_note_exists> <"name_of_category_exists"> <"new_text">
 ```
 ```
 Ex: $edit bruce-profile "nick" "Robin"
 ```
-- **Remove a category/field from a note**
+**Remove a category/field from a note**
 ```
 $rm <name_of_note_exists> <"name_of_category_exists">
 ```
 ```
 Ex: $rm bruce-profile "nick"
 ```
-- **Remove a note**
+**Remove a note**
 ```
 $rm <name_of_note_exists>
 ```

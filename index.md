@@ -1,5 +1,5 @@
 ## About
-[![GitHub](https://img.shields.io/badge/Invite%20LeafCard%20to%20your%20server-blue)](https://discord.com/api/oauth2/authorize?client_id=952058655979749416&permissions=326417770496&scope=bot)
+[![GitHub](https://img.shields.io/badge/Invite%20Leaf%20Card%20to%20your%20server-black)](https://discord.com/api/oauth2/authorize?client_id=952058655979749416&permissions=326417770496&scope=bot)
 
 Create, customize and manage annotations. You have access to your notes on any server the bot is also a part of.
 
@@ -7,30 +7,24 @@ Use your creativity with notes, create game cards, your diary or simply to save 
 
 **UNLIMITED!** Currently you can create **UNLIMITED** annotations with an **UNLIMITED** number of categories/fields in each of them.
 
-### Format of a note
+### Format of notes
 
 A note has its **name** and **categories** , of which it must have some **text** .
 
 ```
 note
---->category1
-    --->text
-        
---->(...)    
-        
---->category999
-    --->text
-        
-(...)     
-
+    category1
+             text       
+    ...         
+    category999
+             text        
+...     
 note999
---->category1
-    --->text
-        
---->(...)    
-        
---->category999
-    --->text
+    category1
+             text     
+    ...         
+    category999
+             text
 ```
 
 ### Commands

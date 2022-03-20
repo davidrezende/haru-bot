@@ -80,6 +80,24 @@ $rm <name_of_note_exists>
 Ex: $rm bruce-profile
 ```
 
+### Card Customizing
+
+You can customize your annotation with **_thumbnail_** and **_image_**. By default, **all notes have these categories protected**, for customizing the card.
+
+**Adding a _thumbnail_ to the card**
+```
+$add <name_of_note> thumbnail <"link_of_thumbnail">
+```
+```
+Ex: $add bruce-profile thumbnail "https://i.pinimg.com/736x/a4/10/67/a41067633a6725f2d10edda14764b65f.jpg"
+```
+**Adding a _image_ to the card**
+```
+$add <name_of_note> image <"link_of_image">
+```
+```
+Ex: $add bruce-profile image "https://i.pinimg.com/originals/59/e0/58/59e05871554be1987c3974fc98035490.jpg"
+```
 ### Contact
 
 Are you having problems? Open an **issue** in the [repository](https://github.com/davidrezende/haru-bot/) or check the available contact channels on my [github profile](https://github.com/davidrezende)
